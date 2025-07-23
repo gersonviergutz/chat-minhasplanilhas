@@ -49,7 +49,7 @@ export const ChatInterface = ({ messages, onSendMessage, isLoading }: ChatInterf
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Get response content - extract only the "output" field
+      // Get response content - extract only the "output" field from array
       let responseContent = 'Mensagem processada com sucesso.';
       
       const contentType = response.headers.get('content-type');
@@ -57,8 +57,15 @@ export const ChatInterface = ({ messages, onSendMessage, isLoading }: ChatInterf
         const text = await response.text();
         if (text.trim()) {
           const data = JSON.parse(text);
-          // Extract only the "output" field
-          responseContent = data.output || 'Resposta recebida, mas sem campo "output"';
+          // Handle array response like [{"output":"text"}]
+          if (Array.isArray(data) && data.length > 0 && data[0].output) {
+            responseContent = data[0].output;
+          } else if (data.output) {
+            // Handle object response like {"output":"text"}
+            responseContent = data.output;
+          } else {
+            responseContent = 'Resposta recebida, mas sem campo "output"';
+          }
         }
       } else {
         // Handle text response
