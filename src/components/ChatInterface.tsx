@@ -46,7 +46,15 @@ export const ChatInterface = ({ messages, onSendMessage, isLoading }: ChatInterf
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      // Handle response - some webhooks return empty responses
+      let data = null;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const text = await response.text();
+        if (text.trim()) {
+          data = JSON.parse(text);
+        }
+      }
       
       // Call the parent handler to update UI
       onSendMessage(message);

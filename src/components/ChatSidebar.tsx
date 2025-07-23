@@ -41,10 +41,10 @@ export const ChatSidebar = ({
       <ScrollArea className="flex-1 p-2">
         <div className="space-y-1">
           {conversations.map((conversation) => (
-            <button
+            <div
               key={conversation.id}
               onClick={() => onSelectConversation(conversation.id)}
-              className={`w-full text-left p-3 rounded-lg transition-smooth group hover:bg-sidebar-accent ${
+              className={`w-full text-left p-3 rounded-lg transition-smooth group hover:bg-sidebar-accent cursor-pointer ${
                 activeConversationId === conversation.id 
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground' 
                   : 'text-sidebar-foreground hover:text-sidebar-accent-foreground'
@@ -62,11 +62,17 @@ export const ChatSidebar = ({
                     {conversation.lastMessage}
                   </p>
                 </div>
-                <button className="opacity-0 group-hover:opacity-100 ml-2 p-1 hover:bg-sidebar-border rounded transition-smooth">
+                <button 
+                  className="opacity-0 group-hover:opacity-100 ml-2 p-1 hover:bg-sidebar-border rounded transition-smooth"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle conversation options
+                  }}
+                >
                   <MoreHorizontal className="w-3 h-3" />
                 </button>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </ScrollArea>
