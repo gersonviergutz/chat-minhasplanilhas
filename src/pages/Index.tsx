@@ -40,7 +40,7 @@ const Index = () => {
 
   const activeConversation = conversations.find(c => c.id === activeConversationId);
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string, aiResponse?: Message) => {
     if (!activeConversationId) return;
 
     const newMessage: Message = {
@@ -50,6 +50,7 @@ const Index = () => {
       timestamp: new Date(),
     };
 
+    // Add user message immediately
     setConversations(prev => prev.map(conv => {
       if (conv.id === activeConversationId) {
         return {
@@ -62,29 +63,25 @@ const Index = () => {
       return conv;
     }));
 
-    // Simulate AI response
-    setIsLoading(true);
-    setTimeout(() => {
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Obrigado pela sua mensagem! Ela foi enviada para o webhook configurado.',
-        isUser: false,
-        timestamp: new Date(),
-      };
+    // If we only have message (first call), start loading
+    if (!aiResponse) {
+      setIsLoading(true);
+      return;
+    }
 
-      setConversations(prev => prev.map(conv => {
-        if (conv.id === activeConversationId) {
-          return {
-            ...conv,
-            messages: [...conv.messages, aiResponse],
-            lastMessage: aiResponse.text,
-            timestamp: new Date(),
-          };
-        }
-        return conv;
-      }));
-      setIsLoading(false);
-    }, 1500);
+    // If AI response is provided (second call), add it and stop loading
+    setConversations(prev => prev.map(conv => {
+      if (conv.id === activeConversationId) {
+        return {
+          ...conv,
+          messages: [...conv.messages, aiResponse],
+          lastMessage: aiResponse.text,
+          timestamp: new Date(),
+        };
+      }
+      return conv;
+    }));
+    setIsLoading(false);
   };
 
   const handleNewConversation = () => {

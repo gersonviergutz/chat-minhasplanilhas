@@ -13,7 +13,7 @@ interface Message {
 
 interface ChatInterfaceProps {
   messages: Message[];
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, aiResponse?: Message) => void;
   isLoading: boolean;
 }
 
@@ -29,6 +29,9 @@ export const ChatInterface = ({ messages, onSendMessage, isLoading }: ChatInterf
   }, [messages]);
 
   const handleSendMessage = async (message: string) => {
+    // First add user message to UI
+    onSendMessage(message);
+    
     try {
       // Call the webhook
       const response = await fetch('https://webhook.minhasplanilhas.com.br/webhook/c473fbb7-2b77-41d4-933f-1faffd9c7d3f', {
@@ -46,25 +49,53 @@ export const ChatInterface = ({ messages, onSendMessage, isLoading }: ChatInterf
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Handle response - some webhooks return empty responses
-      let data = null;
+      // Get response content
+      let responseContent = 'Mensagem processada com sucesso.';
+      
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
         const text = await response.text();
         if (text.trim()) {
-          data = JSON.parse(text);
+          const data = JSON.parse(text);
+          // Try to extract meaningful content from webhook response
+          responseContent = data.message || data.response || data.content || JSON.stringify(data);
+        }
+      } else {
+        // Handle text response
+        const text = await response.text();
+        if (text.trim()) {
+          responseContent = text;
         }
       }
       
-      // Call the parent handler to update UI
-      onSendMessage(message);
+      // Add AI response with webhook content
+      const aiResponse = {
+        id: (Date.now() + 1).toString(),
+        text: responseContent,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      // Add AI response with webhook content using the callback
+      onSendMessage(message, aiResponse);
       
       toast({
         title: "Mensagem enviada",
-        description: "Sua mensagem foi enviada com sucesso!",
+        description: "Resposta recebida do webhook!",
       });
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Add error response
+      const errorResponse = {
+        id: (Date.now() + 1).toString(),
+        text: `Erro ao processar mensagem: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      
+      onSendMessage(message, errorResponse);
+      
       toast({
         title: "Erro ao enviar mensagem",
         description: "Ocorreu um erro ao enviar sua mensagem. Tente novamente.",
