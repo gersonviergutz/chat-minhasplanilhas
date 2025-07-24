@@ -1,5 +1,28 @@
 # Welcome to your Lovable project
 
+## Funcionalidades
+
+### 🌐 Suporte a Múltiplos Idiomas
+- **Português**: Interface completamente traduzida para português brasileiro
+- **English**: Full English interface support
+- **Alteração dinâmica**: Troque o idioma a qualquer momento através do seletor na barra lateral
+- **Persistência**: Sua preferência de idioma é salva no navegador
+
+### 💬 Chat Interface
+- Interface de chat moderna e intuitiva
+- Histórico de conversas
+- Múltiplas conversas simultâneas
+- Interface responsiva
+
+## Como usar o seletor de idioma
+
+1. Localize o botão "🌐 Idioma" na parte inferior da barra lateral
+2. Clique no botão para abrir o menu de opções
+3. Selecione entre:
+   - 🇧🇷 Português
+   - 🇺🇸 English
+4. A interface será atualizada imediatamente com o idioma selecionado
+
 ## Project info
 
 **URL**: https://lovable.dev/projects/0d1c39ef-881f-478a-9233-fe6fe46eb708
