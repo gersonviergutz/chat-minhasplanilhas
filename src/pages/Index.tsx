@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChatSidebar } from '@/components/ChatSidebar';
 import { ChatInterface } from '@/components/ChatInterface';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
@@ -18,25 +19,31 @@ interface Conversation {
 }
 
 const Index = () => {
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: '1',
-      title: 'Primeira conversa',
-      lastMessage: 'Olá! Como posso ajudar?',
-      timestamp: new Date(),
-      messages: [
-        {
-          id: '1',
-          text: 'Olá! Como posso ajudar você hoje?',
-          isUser: false,
-          timestamp: new Date(),
-        }
-      ]
-    }
-  ]);
+  const { t, language } = useLanguage();
   
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string>('1');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize conversations with current language
+  useEffect(() => {
+    setConversations([
+      {
+        id: '1',
+        title: t('firstConversation'),
+        lastMessage: t('greeting'),
+        timestamp: new Date(),
+        messages: [
+          {
+            id: '1',
+            text: t('greeting'),
+            isUser: false,
+            timestamp: new Date(),
+          }
+        ]
+      }
+    ]);
+  }, [language, t]);
 
   const activeConversation = conversations.find(c => c.id === activeConversationId);
 
@@ -87,8 +94,8 @@ const Index = () => {
   const handleNewConversation = () => {
     const newConversation: Conversation = {
       id: Date.now().toString(),
-      title: 'Nova conversa',
-      lastMessage: 'Conversa iniciada',
+      title: t('newConversation'),
+      lastMessage: t('conversationStarted'),
       timestamp: new Date(),
       messages: [],
     };

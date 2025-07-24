@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -10,6 +11,7 @@ interface ChatInputProps {
 
 export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
   const [message, setMessage] = useState('');
+  const { t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Digite sua mensagem..."
+            placeholder={t('typeMessage')}
             className="min-h-[50px] max-h-32 pr-12 resize-none bg-background border-chat-border focus:ring-primary focus:border-primary transition-smooth"
             disabled={isLoading}
           />
@@ -48,7 +50,7 @@ export const ChatInput = ({ onSendMessage, isLoading }: ChatInputProps) => {
           </Button>
         </div>
         <div className="mt-2 text-xs text-muted-foreground text-center">
-          Pressione Enter para enviar, Shift + Enter para quebrar linha
+          {t('sendHint')}
         </div>
       </form>
     </div>

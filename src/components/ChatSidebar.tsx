@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, MessageSquare, MoreHorizontal } from 'lucide-react';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Conversation {
   id: string;
@@ -23,6 +25,8 @@ export const ChatSidebar = ({
   onSelectConversation, 
   onNewConversation 
 }: ChatSidebarProps) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-full">
       {/* Header */}
@@ -33,7 +37,7 @@ export const ChatSidebar = ({
           variant="ghost"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Nova conversa
+          {t('newConversation')}
         </Button>
       </div>
 
@@ -78,7 +82,8 @@ export const ChatSidebar = ({
       </ScrollArea>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="p-4 border-t border-sidebar-border space-y-2">
+        <LanguageSelector />
         <div className="text-xs text-sidebar-foreground opacity-60 text-center">
           Chat GPT Clone
         </div>
